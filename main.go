@@ -2,8 +2,10 @@ package main
 
 import (
 	"log"
+	"tiny-donate/handler"
 	"tiny-donate/user"
 
+	"github.com/gin-gonic/gin"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -19,13 +21,14 @@ func main() {
 	userRepository := user.NewReposistory(db)
 	userService := user.NewService(userRepository)
 	
-	userInput := user.RegisterUserInput{}
-	userInput.Name = "gifania dari service"
-	userInput.Email = "bonjoganteng@gmail.com"
-	userInput.Occupation = "anak presiden"
-	userInput.Password = "password"
+	userHandler := handler.NewUserHandler(userService)
 
-	userService.RegisterUser(userInput)
+	router := gin.Default()
+	api := router.Group("/api/v1")
+
+	api.POST("/users", userHandler.RegisterUser)
+
+	router.Run()
 }	
 
 
