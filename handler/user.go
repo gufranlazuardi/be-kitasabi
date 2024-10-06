@@ -25,14 +25,23 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, nil)
+		response := helper.APIResponse("Register account failed", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
 	}
 
-	user, err := h.userService.RegisterUser(input)
-	response := helper.APIResponse("Account has been registered", http.StatusOK, "success", user)
+	newUser, err := h.userService.RegisterUser(input)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, nil)
+		response := helper.APIResponse("Register account failed", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
 	}
+	
+	// token, err
+
+	formatter := user.FormatUser(newUser, "token")
+
+	response := helper.APIResponse("Account has been registered", http.StatusOK, "success", formatter)
 
 	c.JSON(http.StatusOK, response)
 }		
