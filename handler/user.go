@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"tiny-donate/helper"
 	"tiny-donate/user"
 
 	"github.com/gin-gonic/gin"
@@ -28,9 +29,10 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 	}
 
 	user, err := h.userService.RegisterUser(input)
+	response := helper.APIResponse("Account has been registered", http.StatusOK, "success", user)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, nil)
 	}
 
-	c.JSON(http.StatusOK, user)
-}	
+	c.JSON(http.StatusOK, response)
+}		
