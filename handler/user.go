@@ -6,7 +6,6 @@ import (
 	"tiny-donate/user"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 )
 
 type userHandler struct {
@@ -27,12 +26,8 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
 
-		// mapping error datanya di response kalo gagal (contoh: password required, email format, dll)
-		var errors []string
-
-		for _, e := range err.(validator.ValidationErrors) {
-			errors = append(errors, e.Error())
-		}
+		// mapping error datanya di response kalo gagal (contoh: password required, email format, dll) manggil di helper
+		errors := helper.FormatValidationError(err)
 
 		errorMessage := gin.H{
 			"errors":errors,
