@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"tiny-donate/handler"
 	"tiny-donate/user"
@@ -20,6 +21,18 @@ func main() {
 
 	userRepository := user.NewReposistory(db)
 	userService := user.NewService(userRepository)
+
+	userByEmail, err := userRepository.FindByEmail("balmondddd@gmail.com")
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	if (userByEmail.ID == 0){
+		fmt.Println("User not found")
+	} else {
+		fmt.Println(userByEmail.Name)
+	}
+
 	
 	userHandler := handler.NewUserHandler(userService)
 
