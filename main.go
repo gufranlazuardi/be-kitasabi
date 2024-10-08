@@ -22,17 +22,19 @@ func main() {
 	userRepository := user.NewReposistory(db)
 	userService := user.NewService(userRepository)
 
-	userByEmail, err := userRepository.FindByEmail("balmondddd@gmail.com")
+
+	input := user.LoginUserInput{
+		Email: "balmond@gmail.com",
+		Password: "$2a$04$s5QR16HpYgxS543oqLzbCuuGmFaUN7rqcZq9W8nyoW4KX6JcqhPEa",
+	}
+	user, err := userService.LoginUser(input)
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println("========================")
+		fmt.Println("There something wrong")
 	}
 
-	if (userByEmail.ID == 0){
-		fmt.Println("User not found")
-	} else {
-		fmt.Println(userByEmail.Name)
-	}
-
+	fmt.Println(user.Email)
+	fmt.Println(user.Name)
 	
 	userHandler := handler.NewUserHandler(userService)
 
