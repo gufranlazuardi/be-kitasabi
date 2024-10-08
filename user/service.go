@@ -7,8 +7,9 @@ import (
 )
 
 type Service interface {
-	RegisterUser(RegisterUserInput) (User, error)
-	LoginUser(LoginUserInput) (User, error)
+	RegisterUser(input RegisterUserInput) (User, error)
+	LoginUser(input LoginUserInput) (User, error)
+	IsEmailAvailable(input EmailUserInput) (bool, error)
 }
 
 type service struct {
@@ -24,7 +25,7 @@ func (s *service) RegisterUser(input RegisterUserInput) (User, error) {
 	user.Name = input.Name
 	user.Email = input.Email
 	user.Occupation = input.Occupation
-	
+
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.MinCost)
 	if err != nil {
 		return user, err
@@ -62,7 +63,25 @@ func (s *service) LoginUser(input LoginUserInput) (User, error) {
 	return user, nil
 }
 
+func (s *service) IsEmailAvailable(input EmailUserInput) (bool, error) {
+	// masukin dulu input emailnya
+	email := input.Email
+
+	// simpen ke repository
+	user, err := s.repository.FindByEmail(email)
+
+	if err != nil {
+		return false, err
+	}
+
+	if user.ID == 0 {
+		return true, nil
+	}
+
+	return false, nil
+}
+
+
 // mapping struct input ke struct user
 // simpen ke repository
-
 
