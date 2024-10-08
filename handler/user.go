@@ -61,4 +61,33 @@ func(h *userHandler) LoginUser(c *gin.Context) {
 	// input struct nya passing ke service
 	// di service mencari dengan bantuan repository user dengan email user
 	// jika ketemu, validasi password
+
+	var input user.LoginUserInput
+
+	err := c.ShouldBindJSON(&input)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors":errors}	
+
+		response := helper.APIResponse("Login account failed", http.StatusUnprocessableEntity, "error", errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	// tampung user yang login
+	loggedInUser, err := h.userService.LoginUser(input)
+
+	if err != nil {
+		errorMessage := gin.H{"errors": err.Error()}
+		response := helper.APIResponse("Login account failed", http.StatusUnprocessableEntity, "error", errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return 
+	}
+
+	formatter := user.FormatUser(loggedInUser, "token")
+	
+	response := helper.APIResponse("Login success", http.StatusOK, "success", formatter)
+
+	c.JSON(http.StatusOK, response)
+	
 }

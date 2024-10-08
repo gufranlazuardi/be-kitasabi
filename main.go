@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"tiny-donate/handler"
 	"tiny-donate/user"
@@ -21,20 +20,6 @@ func main() {
 
 	userRepository := user.NewReposistory(db)
 	userService := user.NewService(userRepository)
-
-
-	input := user.LoginUserInput{
-		Email: "balmond@gmail.com",
-		Password: "$2a$04$s5QR16HpYgxS543oqLzbCuuGmFaUN7rqcZq9W8nyoW4KX6JcqhPEa",
-	}
-	user, err := userService.LoginUser(input)
-	if err != nil {
-		fmt.Println("========================")
-		fmt.Println("There something wrong")
-	}
-
-	fmt.Println(user.Email)
-	fmt.Println(user.Name)
 	
 	userHandler := handler.NewUserHandler(userService)
 
@@ -42,6 +27,7 @@ func main() {
 	api := router.Group("/api/v1")
 
 	api.POST("/users", userHandler.RegisterUser)
+	api.POST("/sessions", userHandler.LoginUser)
 
 	router.Run()
 }	
