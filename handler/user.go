@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"tiny-donate/helper"
 	"tiny-donate/user"
@@ -149,4 +150,41 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 	// JWT (sementara hardcode, seakan2 user yang login id=1)
 	// repo ambil data user yang ID = 1
 	// repo update data user simpan lokasi file
+
+	// test di postman bagian body -> form data -> key "avatar"
+	file, err := c.FormFile("avatar")
+	if err != nil {
+		data := gin.H{"is_uploaded": false}
+		response := helper.APIResponse("Failed to upload avatar images", http.StatusBadRequest, "error", data)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	// harusnya dapet dari JWT, masih hardcode
+	userID := 10
+
+	// path = "images/" + file.Filename
+	path := fmt.Sprintf("images/%d-%s", userID, file.Filename)
+	
+
+	err = c.SaveUploadedFile(file, path)
+	if err != nil {
+		data := gin.H{"is_uploaded": false}
+		response := helper.APIResponse("Failed to upload avatar images", http.StatusBadRequest, "error", data)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+
+	_, err = h.userService.SaveAvatar(userID, path)
+	if err != nil {
+		data := gin.H{"is_uploaded": false}
+		response := helper.APIResponse("Failed to upload avatar images", http.StatusBadRequest, "error", data)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	data := gin.H{"is_uploaded": true}
+	response := helper.APIResponse("Avatar successfully uploaded", http.StatusOK, "success", data)
+	c.JSON(http.StatusOK, response)
 }
