@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"tiny-donate/auth"
 	"tiny-donate/handler"
 	"tiny-donate/user"
 
@@ -20,10 +22,26 @@ func main() {
 
 	userRepository := user.NewReposistory(db)
 	userService := user.NewService(userRepository)
+	authService := auth.NewService()
+	
+	testToken, err := authService.ValidateToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxM30.7ii5SXCsL624sd-W6AZX2F_1444oHKKZt47B_bYQ8QU")
+	if err != nil {
+		fmt.Println("======================")
+		fmt.Println("Token error")
+		fmt.Println("======================")
+	}
+
+	if testToken.Valid {
+		fmt.Println("======================")
+		fmt.Println("Token valid")
+		fmt.Println("======================")
+	}
+
+	fmt.Println(authService.GenerateToken(1001))
 
 	userService.SaveAvatar(1, "images/1-profile.png")
 	
-	userHandler := handler.NewUserHandler(userService)
+	userHandler := handler.NewUserHandler(userService, authService)
 
 	router := gin.Default()
 	api := router.Group("/api/v1")
