@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strings"
 	"tiny-donate/auth"
+	"tiny-donate/campaign"
 	"tiny-donate/handler"
 	"tiny-donate/helper"
 	"tiny-donate/user"
@@ -25,6 +26,8 @@ func main() {
 	}
 
 	userRepository := user.NewReposistory(db)
+	campaignRepository := campaign.NewReposistory(db)
+	
 	userService := user.NewService(userRepository)
 	authService := auth.NewService()
 	
