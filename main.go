@@ -28,22 +28,17 @@ func main() {
 	userRepository := user.NewReposistory(db)
 	campaignRepository := campaign.NewReposistory(db)
 	
-	campaigns, err := campaignRepository.FindById(1)
-	
-	fmt.Println("============================")
-	fmt.Println("============================")
-	fmt.Println("============================")
-	fmt.Println(len(campaigns))
-	for _, campaign := range campaigns {
-		fmt.Println(campaign.Name)
-		fmt.Println(campaign.CampaignImages[0].FileName)
-	}
+	campaignService := campaign.NewService(campaignRepository)
 
+	campaigns ,_ := campaignService.GetCampaigns(10)
+	fmt.Println("panjang campaign")
+	fmt.Println(len(campaigns))
 
 	userService := user.NewService(userRepository)
 	authService := auth.NewService()
 	
 	userHandler := handler.NewUserHandler(userService, authService)
+	campaignHandler := handler.NewCampaignHandler(campaignService)
 
 	router := gin.Default()
 	api := router.Group("/api/v1")
@@ -52,6 +47,8 @@ func main() {
 	api.POST("/sessions",userHandler.LoginUser)
 	api.POST("/email_checkers", userHandler.CheckEmailAvailibility)
 	api.POST("/avatars", authMiddleware(authService, userService), userHandler.UploadAvatar)
+
+	api.GET("/campaigns", campaignHandler.GetCampaigns)
 
 	router.Run()
 }	

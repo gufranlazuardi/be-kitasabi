@@ -6,7 +6,7 @@ import (
 
 type Repository interface {
 	FindAll() ([]Campaign, error)
-	FindById(userID int) ([]Campaign, error)
+	FindByUserID(userID int) ([]Campaign, error)
 }
 
 type repository struct {
@@ -18,23 +18,23 @@ func NewReposistory(db *gorm.DB) *repository {
 }
 
 func (r *repository) FindAll() ([]Campaign, error) {
-	var AllCampaign []Campaign
+	var campaigns []Campaign
 
-	err := r.db.Find(&AllCampaign).Error
+	err := r.db.Find(&campaigns).Error
 	if err != nil {
-		return AllCampaign, err
+		return campaigns, err
 	}
 
-	return AllCampaign, nil
+	return campaigns, nil
 }
 
-func (r *repository) FindById(userID int) ([]Campaign, error) {
-	var AllCampaign []Campaign
+func (r *repository) FindByUserID(userID int) ([]Campaign, error) {
+	var campaigns []Campaign
 	// karena punya relasi ke CampaignImages, kasih preload
-	err := r.db.Where("user_id = ?", userID).Preload("CampaignImages", "campaign_images.is_primary = 1").Find(&AllCampaign).Error
+	err := r.db.Where("user_id = ?", userID).Preload("CampaignImages", "campaign_images.is_primary = 1").Find(&campaigns).Error
 	if err != nil {
-		return AllCampaign, err
+		return campaigns, err
 	}
 
-	return AllCampaign, nil
+	return campaigns, nil
 }
