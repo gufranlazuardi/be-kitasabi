@@ -40,4 +40,10 @@ func (h *campaignHandler) GetCampaigns(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+func (h *campaignHandler)  GetCampaign(c *gin.Context){
+	// handler mapping id yang di url ke struct input => service, call formatter
+	// service : struct input untuk menangkap id url pake shouldbind
+	// repository : get campaign by id
+}
+
 // api/v1/campaigns
