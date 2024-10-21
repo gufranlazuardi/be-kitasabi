@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -9,6 +8,7 @@ import (
 	"tiny-donate/campaign"
 	"tiny-donate/handler"
 	"tiny-donate/helper"
+	"tiny-donate/transaction"
 	"tiny-donate/user"
 
 	"github.com/dgrijalva/jwt-go"
@@ -25,20 +25,21 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
+	// repository
 	userRepository := user.NewReposistory(db)
 	campaignRepository := campaign.NewReposistory(db)
+	transactionRepostory := transaction.NewReposistory(db)
 	
-	campaignService := campaign.NewService(campaignRepository)
-
-	campaigns ,_ := campaignService.GetCampaigns(10)
-	fmt.Println("panjang campaign")
-	fmt.Println(len(campaigns))
-
+	// service
 	userService := user.NewService(userRepository)
 	authService := auth.NewService()
+	campaignService := campaign.NewService(campaignRepository)
+	transactionService := transaction.NewService(transactionRepostory, campaignRepository)
 
+	// handler
 	userHandler := handler.NewUserHandler(userService, authService)
 	campaignHandler := handler.NewCampaignHandler(campaignService)
+	transactionHandler := handler.NewTransactionHandler(transactionService)
 
 	router := gin.Default()
 	router.Static("/images", "./images")
@@ -55,6 +56,9 @@ func main() {
 	api.PUT("/campaigns/:id", authMiddleware(authService, userService), campaignHandler.UpdateCampaign)
 
 	api.POST("/campaign-images", authMiddleware(authService, userService), campaignHandler.UploadImage)
+
+	api.GET("/campaigns/:id/transactions", authMiddleware(authService, userService), transactionHandler.GetCampaignTransactions)
+	
 
 	router.Run()
 }	
