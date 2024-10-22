@@ -2,6 +2,7 @@ package transaction
 
 import (
 	"time"
+	"tiny-donate/campaign"
 	"tiny-donate/user"
 )
 
@@ -12,6 +13,7 @@ type Transaction struct {
 	Amount		int
 	Status 		string
 	Code		int
+	Campaign	campaign.Campaign
 	User		user.User
 	CreatedAt	time.Time
 	UpdatedAt	time.Time
