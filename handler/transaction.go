@@ -60,7 +60,7 @@ func(h *transactionHandler) GetUserTransactions(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	response := helper.APIResponse("Users's transactions success", http.StatusOK, "success", transactions)
+	response := helper.APIResponse("Users's transactions success", http.StatusOK, "success", transaction.FormatUserTransactions(transactions))
 	c.JSON(http.StatusOK, response)
 }
 
@@ -70,3 +70,10 @@ func(h *transactionHandler) GetUserTransactions(c *gin.Context) {
 // ambil nilai user dari jwt
 // service
 // ambil data transactions (preload campaign)
+
+
+// midtrans
+// input dari user
+// handler tangkap inputannya, mapping ke input struct
+// panggil service buat transaksi, manggil sistem midtrans
+// service panggil repository
