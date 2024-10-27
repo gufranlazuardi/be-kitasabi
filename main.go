@@ -8,6 +8,7 @@ import (
 	"tiny-donate/campaign"
 	"tiny-donate/handler"
 	"tiny-donate/helper"
+	"tiny-donate/payment"
 	"tiny-donate/transaction"
 	"tiny-donate/user"
 
@@ -34,7 +35,8 @@ func main() {
 	userService := user.NewService(userRepository)
 	authService := auth.NewService()
 	campaignService := campaign.NewService(campaignRepository)
-	transactionService := transaction.NewService(transactionRepostory, campaignRepository)
+	paymentService := payment.NewService()
+	transactionService := transaction.NewService(transactionRepostory, campaignRepository, paymentService)
 
 	// user,_ := userService.GetUserByID(1)
 
