@@ -58,7 +58,7 @@ func(s *service) CreateTransaction(input CreateTransactionInput) (Transaction, e
 	transaction := Transaction{}
 
 	transaction.Amount = input.Amount
-	transaction.CampaignId = input.CampaignID
+	transaction.CampaignID = input.CampaignID
 	transaction.UserID = input.User.ID
 	transaction.Status = "pending"
 	
@@ -76,12 +76,12 @@ func(s *service) CreateTransaction(input CreateTransactionInput) (Transaction, e
 	paymentURL, err := s.paymentService.GetPaymentURL(paymentTransaction, input.User)
 
 	if err != nil {
-		return paymentURL, err
+		return newTransaction, err
 	}
 
 	newTransaction.PaymentURL = paymentURL
 
-	newTransaction, err = s.repository.Update(transaction)
+	newTransaction, err = s.repository.Update(newTransaction)
 	if err != nil {
 		return newTransaction, err
 	}

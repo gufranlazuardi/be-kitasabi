@@ -8,7 +8,7 @@ import (
 
 type Transaction struct {
 	ID 			int
-	CampaignId	int
+	CampaignID	int
 	UserID		int
 	Amount		int
 	Status 		string
