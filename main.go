@@ -13,6 +13,7 @@ import (
 	"tiny-donate/user"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -38,22 +39,13 @@ func main() {
 	paymentService := payment.NewService()
 	transactionService := transaction.NewService(transactionRepostory, campaignRepository, paymentService)
 
-	// user,_ := userService.GetUserByID(1)
-
-	// input := transaction.CreateTransactionInput{
-	// 	Amount: 4000000,
-	// 	CampaignID : 1,
-	// 	User: user,
-	// }
-	
-	// transactionService.CreateTransaction(input)
-
 	// handler
 	userHandler := handler.NewUserHandler(userService, authService)
 	campaignHandler := handler.NewCampaignHandler(campaignService)
 	transactionHandler := handler.NewTransactionHandler(transactionService)
 
 	router := gin.Default()
+	router.Use(cors.Default())
 	router.Static("/images", "./images")
 	api := router.Group("/api/v1")
 
